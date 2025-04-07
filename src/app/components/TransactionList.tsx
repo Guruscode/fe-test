@@ -103,21 +103,20 @@ const TransactionList = () => {
   const getTransactionIcon = (txn: Transaction) => {
     return txn.type === 'withdrawal' ? (
        <Image 
-       src="/icons/call_made.png"  // Path relative to the public folder
-        alt="Logo" 
+         src="/icons/call_made.png"
+         alt="Withdrawal" 
+         width={22} 
+         height={22} 
+         className="object-contain mr-1 mb-1"
+       />
+    ) : (
+      <Image 
+        src="/icons/call_received.png"
+        alt="Deposit" 
         width={22} 
         height={22} 
         className="object-contain mr-1 mb-1"
       />
-                      
-    ) : (
-      <Image 
-      src="/icons/call_received.png"  // Path relative to the public folder
-       alt="Logo" 
-       width={22} 
-       height={22} 
-       className="object-contain mr-1 mb-1"
-     />
     );
   };
 
@@ -145,16 +144,16 @@ const TransactionList = () => {
   if (error) return <p className="text-center text-red-500 py-8">{error}</p>;
 
   return (
-    <div className="py-6 px-4 md:px-6 rounded-lg">
+    <div className="w-full overflow-x-hidden">
       <div className="relative">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{filteredTransactions.length} Transactions</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{filteredTransactions.length} Transactions</h2>
             <p className="text-sm text-gray-600">
               {filtersApplied ? 'Filtered transactions' : 'All transactions'}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setShowFilter(!showFilter)}
               className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-800 flex items-center gap-1 text-sm font-medium"
@@ -171,7 +170,7 @@ const TransactionList = () => {
         </div>
 
         {showFilter && (
-          <div className="absolute right-0 top-full mt-2 z-50">
+          <div className="absolute right-0 top-full mt-2 z-50 w-full sm:w-auto">
             <Filter
               onApply={handleApplyFilters}
               onClear={handleClearFilters}
@@ -185,18 +184,22 @@ const TransactionList = () => {
 
       <div className="space-y-4">
         {filteredTransactions.length > 0 ? (
-         filteredTransactions.map((txn: Transaction, idx) => (
-            <div key={txn.id || idx} className="flex justify-between items-center py-3">
-              <div className="flex items-center">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 
+          filteredTransactions.map((txn: Transaction, idx) => (
+            <div key={txn.id || idx} className="flex flex-wrap justify-between items-center py-3">
+              <div className="flex items-center w-full sm:w-auto mb-2 sm:mb-0">
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mr-3 sm:mr-4 
                   ${txn.type === 'withdrawal' ? 'bg-red-50' : 'bg-green-50'}`}>
                   {getTransactionIcon(txn)}
                 </div>
-                <div>
-                  <p className="font-medium text-base text-gray-900">{txn.metadata?.product_name || txn.metadata?.type || txn.type}</p>
-                  <p className="text-sm text-gray-500 mt-0.5">{txn.metadata?.name}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm sm:text-base text-gray-900 truncate">
+                    {txn.metadata?.product_name || txn.metadata?.type || txn.type}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5 truncate">
+                    {txn.metadata?.name}
+                  </p>
                   {txn.status && (
-                    <p className={`text-sm font-medium mt-0.5 ${
+                    <p className={`text-xs sm:text-sm font-medium mt-0.5 ${
                       txn.status === 'successful' ? 'text-green-600' :
                       txn.status === 'pending' ? 'text-amber-600' : 'text-red-600'
                     }`}>
@@ -206,12 +209,12 @@ const TransactionList = () => {
                 </div>
               </div>
 
-              <div className="text-right">
-                <p className="font-medium text-gray-900">USD {(txn.amount).toLocaleString(undefined, {
+              <div className="text-right ml-auto">
+                <p className="font-medium text-sm sm:text-base text-gray-900">USD {(txn.amount).toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}</p>
-                <p className="text-sm text-gray-500 mt-0.5">
+                <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
                   {new Date(txn.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
